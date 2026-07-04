@@ -48,3 +48,14 @@ FOLDERS = {
 # Fayl qidiruvi shu papkalar ichida amalga oshiriladi (ko'p fayl bo'lgan
 # joylarni qidirish sekin bo'lgani uchun cheklangan)
 SEARCH_ROOTS = ["Desktop", "Downloads", "Documents"]
+
+# --- AI orqali tushunish (ixtiyoriy, ai_router.py) ---
+# Buyruqni qat'iy kalit so'zlar o'rniga Claude AI yordamida tushunish uchun
+# ANTHROPIC_API_KEY muhit o'zgaruvchisini o'rnatish kerak (console.anthropic.com
+# dan olinadi). Bu pullik - har bir buyruq uchun kichik summa yechiladi.
+#
+# Standart model eng qobiliyatli model (claude-opus-4-8). Bu ovozli buyruqlarni
+# tez-tez, kichik va sodda so'rovlar bilan aniqlaydigan vazifa bo'lgani uchun,
+# tezlik/narx muhimroq bo'lsa, quyidagini "claude-haiku-4-5" ga almashtirishingiz
+# mumkin - sifat farqi bu oddiy buyruqlar uchun deyarli sezilmaydi.
+AI_MODEL = "claude-opus-4-8"

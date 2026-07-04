@@ -11,7 +11,7 @@ import config
 HOME = Path.home()
 
 
-def _open_app(path):
+def open_app(path):
     try:
         if os.path.isabs(path) and os.path.exists(path):
             subprocess.Popen([path])
@@ -22,7 +22,7 @@ def _open_app(path):
         return False
 
 
-def _find_file(name):
+def find_file(name):
     name = name.lower()
     for root_name in config.SEARCH_ROOTS:
         root = HOME / root_name
@@ -35,7 +35,7 @@ def _find_file(name):
     return None
 
 
-def _change_volume(delta_percent):
+def change_volume(delta_percent):
     try:
         from ctypes import POINTER, cast
 
@@ -53,7 +53,7 @@ def _change_volume(delta_percent):
     return True, None
 
 
-def _change_brightness(delta):
+def change_brightness(delta):
     try:
         import screen_brightness_control as sbc
     except ImportError:
@@ -82,7 +82,7 @@ def dispatch(text, speak, listen):
     if "och" in text:
         for name, path in config.APPS.items():
             if name in text:
-                if _open_app(path):
+                if open_app(path):
                     speak(f"{name} ochildi")
                 else:
                     speak(f"{name} ni ocholmadim")
@@ -104,7 +104,7 @@ def dispatch(text, speak, listen):
             words = text.replace("ochib ber", "").replace("ochib", "").replace("och", "")
             words = words.replace("fayl", "").replace("papka", "").replace("ni", "").strip()
             if words:
-                found = _find_file(words)
+                found = find_file(words)
                 if found:
                     os.startfile(found)
                     speak(f"{words} topildi va ochildi")
@@ -127,7 +127,7 @@ def dispatch(text, speak, listen):
         words = text.split("qidir", 1)[-1]
         words = words.replace("fayl", "").replace("papka", "").replace("ni", "").strip()
         if words:
-            found = _find_file(words)
+            found = find_file(words)
             if found:
                 speak(f"{words} topildi: {found.parent}")
                 os.startfile(found.parent)
@@ -167,28 +167,28 @@ def dispatch(text, speak, listen):
 
     # --- Ovoz balandligi ---
     if "ovoz" in text and any(w in text for w in ("baland", "kuchaytir", "oshir")):
-        ok, error = _change_volume(15)
+        ok, error = change_volume(15)
         speak("Ovoz balandlashtirildi" if ok else error)
         return
 
     if "ovoz" in text and any(w in text for w in ("past", "kamaytir", "tushir")):
-        ok, error = _change_volume(-15)
+        ok, error = change_volume(-15)
         speak("Ovoz pasaytirildi" if ok else error)
         return
 
     if "ovoz" in text and "o'chir" in text:
-        ok, error = _change_volume(-100)
+        ok, error = change_volume(-100)
         speak("Ovoz o'chirildi" if ok else error)
         return
 
     # --- Ekran yorqinligi ---
     if "yorqinlik" in text and any(w in text for w in ("oshir", "baland", "kuchaytir")):
-        ok, error = _change_brightness(15)
+        ok, error = change_brightness(15)
         speak("Yorqinlik oshirildi" if ok else error)
         return
 
     if "yorqinlik" in text and any(w in text for w in ("kamaytir", "past", "tushir")):
-        ok, error = _change_brightness(-15)
+        ok, error = change_brightness(-15)
         speak("Yorqinlik kamaytirildi" if ok else error)
         return
 

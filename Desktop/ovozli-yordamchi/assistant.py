@@ -11,6 +11,7 @@ signaldan keyin buyruqni ayting.
 import speech_recognition as sr
 import pyttsx3
 
+import ai_router
 import config
 from commands import dispatch
 from voice import configure_voice
@@ -61,8 +62,12 @@ def main():
         if wake_word_detected(lowered, config.WAKE_WORDS):
             speak("Eshityapman")
             command_text = listen(timeout=5, phrase_time_limit=6)
+            confirm_listen = lambda: listen(timeout=5, phrase_time_limit=4)
             try:
-                dispatch(command_text, speak, lambda: listen(timeout=5, phrase_time_limit=4))
+                if ai_router.is_configured():
+                    ai_router.handle(command_text, speak, confirm_listen)
+                else:
+                    dispatch(command_text, speak, confirm_listen)
             except Exception as exc:  # noqa: BLE001 - bitta buyruq xatosi yordamchini o'chirib qo'ymasligi kerak
                 speak(f"Xatolik yuz berdi: {exc}")
 

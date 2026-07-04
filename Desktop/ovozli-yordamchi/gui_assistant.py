@@ -16,6 +16,7 @@ from tkinter import font as tkfont
 import pyttsx3
 import speech_recognition as sr
 
+import ai_router
 import config
 from commands import dispatch
 from voice import configure_voice
@@ -173,7 +174,10 @@ class AssistantWindow:
             return self._listen(timeout=5, phrase_time_limit=4)
 
         try:
-            dispatch(text, speak_and_show, confirm_listen)
+            if ai_router.is_configured():
+                ai_router.handle(text, speak_and_show, confirm_listen)
+            else:
+                dispatch(text, speak_and_show, confirm_listen)
         except Exception as exc:  # noqa: BLE001 - buyruq turlari xilma-xil, biror xato butun yordamchini o'chirib qo'ymasligi kerak
             self._set_status(f"Xatolik: {exc}", COLOR_ERROR)
         threading.Timer(4.0, lambda: self._set_status(READY_STATUS)).start()

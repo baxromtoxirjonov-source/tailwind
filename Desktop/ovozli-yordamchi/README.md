@@ -86,6 +86,27 @@ ayting.
 - "Kompyuterni o'chir" / "qayta yoqish" buyruqlari xato eshitilib ketmasligi
   uchun har doim "Ha/Yo'q" deb tasdiqlashni so'raydi.
 
+## AI orqali "aqlli" tushunish (ixtiyoriy)
+
+Standart holatda yordamchi qat'iy kalit so'zlar ("och", "qidir", "papka"...)
+orqali ishlaydi. Agar buyruqlarni erkinroq gapirsangiz ham to'g'ri tushunishini
+xohlasangiz, Claude AI'ni ulashingiz mumkin:
+
+1. https://console.anthropic.com dan hisob oching va API kalit yarating
+2. Kalitni muhit o'zgaruvchisi sifatida o'rnating:
+   - PowerShell: `setx ANTHROPIC_API_KEY "sk-ant-..."`  (keyin terminalni qayta oching)
+3. `pip install -r requirements.txt` (endi `anthropic` kutubxonasini ham o'rnatadi)
+
+Kalit o'rnatilgan bo'lsa, yordamchi avtomatik ravishda AI orqali tushunishga
+o'tadi (`ai_router.py`) — kalit so'zlarga qat'iy amal qilish shart bo'lmaydi.
+Kalit o'rnatilmagan bo'lsa, avvalgidek oddiy kalit-so'z rejimida ishlayveradi.
+
+**Narxi haqida:** bu pullik xizmat — har bir ovozli buyruq uchun juda kichik
+summa (bir necha sentning ulushi) yechiladi. Standart model eng qobiliyatlisi
+(`claude-opus-4-8`); tezlik/narx muhimroq bo'lsa `config.py` dagi `AI_MODEL`
+ni `"claude-haiku-4-5"` ga almashtiring — bu oddiy buyruqlar uchun deyarli
+bir xil ishlaydi, lekin ancha arzon va tezroq.
+
 ## Agar hech narsa ishlamasa (mikrofon hech narsani tanimasa)
 
 Bularni tekshiring:
