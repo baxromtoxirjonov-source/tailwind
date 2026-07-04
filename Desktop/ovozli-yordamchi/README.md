@@ -19,6 +19,16 @@ pipwin install pyaudio
 
 ## Ishga tushirish
 
+**Oynali versiya (tavsiya etiladi)** — Google Assistant kabi ekran pastida
+kichik oynacha chiqadi, unga yozib ham, mikrofon tugmasini bosib gapirib ham,
+"kompyuter" deb uyg'otib ham buyruq berish mumkin:
+
+```
+python gui_assistant.py
+```
+
+**Konsol versiyasi** — faqat ovoz orqali, oynasiz ishlaydi:
+
 ```
 python assistant.py
 ```
@@ -53,7 +63,32 @@ ayting.
 
 - Nutqni tanish Google'ning bepul onlayn xizmati orqali ishlaydi — internet
   aloqasi kerak.
+- Javob matni har doim o'zbekcha bo'ladi. Ovoz chiqarib gapirish (TTS) esa
+  Windows'da o'rnatilgan tizim ovozlari orqali ishlaydi — aksariyat
+  Windows'larda o'zbekcha ovoz o'rnatilmagan bo'ladi, shuning uchun matn
+  o'zbekcha bo'lsa-da, talaffuz boshqa til (masalan ingliz yoki rus)
+  aksentida eshitilishi mumkin. Agar bu yoqmasa, `gui_assistant.py` dagi
+  `self.speak(...)` chaqiruvlarini olib tashlab, faqat matn ko'rinishini
+  qoldirish mumkin.
 - Uzoq umr ko'rish uchun avtomatik ishga tushirishni xohlasangiz, bu skriptni
   Windows Task Scheduler yoki Startup papkasiga qo'shishingiz mumkin.
 - "Kompyuterni o'chir" / "qayta yoqish" buyruqlari xato eshitilib ketmasligi
   uchun har doim "Ha/Yo'q" deb tasdiqlashni so'raydi.
+
+## Agar hech narsa ishlamasa (mikrofon hech narsani tanimasa)
+
+Bularni tekshiring:
+
+1. **PyAudio o'rnatilganmi?** `python -c "import pyaudio"` xatosiz ishlasa,
+   demak o'rnatilgan. Xato chiqsa, "O'rnatish" bo'limidagi `pipwin` usulini
+   sinab ko'ring.
+2. **Windows mikrofon ruxsati.** Sozlamalar → Maxfiylik va xavfsizlik →
+   Mikrofon → "Ilovalarga mikrofondan foydalanishga ruxsat berish" yoqilganligini
+   tekshiring.
+3. **Tanish tili.** `config.py` dagi `LANGUAGE = "uz-UZ"` ba'zi mikrofon/aksent
+   uchun yaxshi ishlamasligi mumkin. `"ru-RU"` yoki `"en-US"` ga almashtirib,
+   o'sha tilda gapirib ko'ring — muammo tilga bog'liqmi yoki mikrofonga
+   bog'liqmi shu orqali bilib olasiz.
+4. **Terminaldagi xabarlarni o'qing** (`assistant.py` ishlatayotgan bo'lsangiz)
+   — "Eshitildi: ..." qatori chiqmasa, ovoz umuman mikrofonga yetib
+   bormayapti degani (mikrofon tanlash yoki ruxsat muammosi).
