@@ -6,7 +6,7 @@ WAKE_WORDS = ["kompyuter"]
 # Nutqni tanish tili. Agar tanish sifatsiz bo'lsa "ru-RU" yoki "en-US" ga
 # almashtirib ko'ring - Google'ning bepul tanish xizmati ba'zi tillarda
 # boshqalariga qaraganda aniqroq ishlaydi.
-LANGUAGE = "uz-UZ"
+LANGUAGE = "ru-RU"
 
 # Ovoz bilan ochsa bo'ladigan dasturlar. Kalit - buyruqda aytiladigan nom,
 # qiymat - dastur fayli (agar PATH'da bo'lmasa to'liq yo'l ko'rsating).

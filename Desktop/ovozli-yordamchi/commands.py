@@ -112,6 +112,16 @@ def dispatch(text, speak, listen):
                     speak(f"{words} nomli fayl topilmadi")
                 return
 
+        # Ro'yxatdagi dastur/sayt/papkalarga to'g'ri kelmasa, aytilgan nomni
+        # to'g'ridan-to'g'ri veb-sayt sifatida ochishga harakat qilamiz
+        # (masalan config.py da yo'q "instagram", "wildberries" va h.k.)
+        words = text.replace("ochib ber", "").replace("ochib", "").replace("och", "")
+        words = words.replace(" ", "").strip()
+        if words:
+            webbrowser.open(f"https://{words}.com")
+            speak(f"{words} saytini ochishga harakat qildim")
+            return
+
     # --- Fayl/papka qidirish ---
     if "qidir" in text and ("fayl" in text or "papka" in text):
         words = text.split("qidir", 1)[-1]

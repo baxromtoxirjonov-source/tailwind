@@ -39,6 +39,7 @@ class AssistantWindow:
         self.tts_engine = pyttsx3.init()
         configure_voice(self.tts_engine)
 
+        self.mic_lock = threading.Lock()
         self.busy = threading.Event()
         self.command_queue = queue.Queue()
         self.root.after(100, self._poll_queue)
@@ -122,11 +123,16 @@ class AssistantWindow:
         self.command_queue.put(("status", text))
 
     def _listen(self, timeout=5, phrase_time_limit=6):
-        with self.microphone as source:
-            try:
-                audio = self.recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
-            except sr.WaitTimeoutError:
-                return ""
+        # Mikrofon bir vaqtning o'zida faqat bitta joydan (uyg'otuvchi so'z
+        # tsikli, mikrofon tugmasi yoki matn orqali tasdiqlash) ishlatilishi
+        # kerak, aks holda SpeechRecognition xato beradi. Shu sababli
+        # navbatga qo'yamiz.
+        with self.mic_lock:
+            with self.microphone as source:
+                try:
+                    audio = self.recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
+                except sr.WaitTimeoutError:
+                    return ""
         try:
             return self.recognizer.recognize_google(audio, language=config.LANGUAGE)
         except (sr.UnknownValueError, sr.RequestError):
@@ -190,7 +196,7 @@ class AssistantWindow:
             if self.busy.is_set():
                 time.sleep(0.2)
                 continue
-            heard = self._listen(timeout=None, phrase_time_limit=4)
+            heard = self._listen(timeout=4, phrase_time_limit=4)
             if not heard or not any(w in heard.lower() for w in config.WAKE_WORDS):
                 continue
 
