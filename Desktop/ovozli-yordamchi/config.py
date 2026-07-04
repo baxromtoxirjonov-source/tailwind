@@ -1,7 +1,7 @@
 # Yordamchi sozlamalari. Bu faylni tahrirlab, o'zingizga moslashtiring.
 
-# Uyg'otuvchi so'zlar (shulardan birini aytsangiz, yordamchi buyruqni kuta boshlaydi)
-WAKE_WORDS = ["kompyuter", "hey kompyuter", "ey kompyuter", "ok kompyuter"]
+# Uyg'otuvchi so'z (shu so'zni aytsangiz, yordamchi buyruqni kuta boshlaydi)
+WAKE_WORDS = ["kompyuter"]
 
 # Nutqni tanish tili. Agar tanish sifatsiz bo'lsa "ru-RU" yoki "en-US" ga
 # almashtirib ko'ring - Google'ning bepul tanish xizmati ba'zi tillarda

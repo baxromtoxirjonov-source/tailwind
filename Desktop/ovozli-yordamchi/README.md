@@ -6,6 +6,18 @@ yordamchi.
 
 ## O'rnatish
 
+**0-qadam — Python o'rnatilganligini tekshiring.** Terminalga `python
+--version` yozing. Agar versiya raqami chiqmasa (masalan Microsoft Store
+ochilib ketsa yoki hech narsa chiqmasa), demak Python haqiqiy
+o'rnatilmagan — faqat Windows'ning "o'rnat" tugmasi bor. Quyidagi qadamlar
+shu tufayli "hech narsa ishlamayapti" bo'lib ko'rinadi:
+
+1. https://www.python.org/downloads/ dan Python'ni yuklab oling
+2. O'rnatishda **"Add python.exe to PATH"** katagini albatta belgilang
+3. Terminalni yopib qayta oching, `python --version` bilan tekshiring
+
+Shundan keyingina quyidagini bajaring:
+
 ```
 pip install -r requirements.txt
 ```
@@ -64,12 +76,11 @@ ayting.
 - Nutqni tanish Google'ning bepul onlayn xizmati orqali ishlaydi — internet
   aloqasi kerak.
 - Javob matni har doim o'zbekcha bo'ladi. Ovoz chiqarib gapirish (TTS) esa
-  Windows'da o'rnatilgan tizim ovozlari orqali ishlaydi — aksariyat
-  Windows'larda o'zbekcha ovoz o'rnatilmagan bo'ladi, shuning uchun matn
-  o'zbekcha bo'lsa-da, talaffuz boshqa til (masalan ingliz yoki rus)
-  aksentida eshitilishi mumkin. Agar bu yoqmasa, `gui_assistant.py` dagi
-  `self.speak(...)` chaqiruvlarini olib tashlab, faqat matn ko'rinishini
-  qoldirish mumkin.
+  Windows'da o'rnatilgan tizim ovozlari orqali ishlaydi (`voice.py`): avval
+  o'zbekcha ovoz qidiriladi, topilmasa ayol ovozi (masalan "Zira") tanlanadi,
+  u ham bo'lmasa standart ovoz qoladi. Aksariyat Windows'larda o'zbekcha ovoz
+  o'rnatilmagan bo'ladi, shuning uchun matn o'zbekcha bo'lsa-da, talaffuz
+  boshqa til (masalan ingliz yoki rus) aksentida eshitilishi mumkin.
 - Uzoq umr ko'rish uchun avtomatik ishga tushirishni xohlasangiz, bu skriptni
   Windows Task Scheduler yoki Startup papkasiga qo'shishingiz mumkin.
 - "Kompyuterni o'chir" / "qayta yoqish" buyruqlari xato eshitilib ketmasligi

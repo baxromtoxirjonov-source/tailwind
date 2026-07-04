@@ -17,6 +17,7 @@ import speech_recognition as sr
 
 import config
 from commands import dispatch
+from voice import configure_voice
 
 WIDTH = 520
 HEIGHT = 90
@@ -36,7 +37,7 @@ class AssistantWindow:
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
         self.tts_engine = pyttsx3.init()
-        self._use_uzbek_voice_if_available()
+        configure_voice(self.tts_engine)
 
         self.busy = threading.Event()
         self.command_queue = queue.Queue()
@@ -100,16 +101,6 @@ class AssistantWindow:
         x = self.root.winfo_pointerx() - self._drag_offset[0]
         y = self.root.winfo_pointery() - self._drag_offset[1]
         self.root.geometry(f"+{x}+{y}")
-
-    def _use_uzbek_voice_if_available(self):
-        for voice in self.tts_engine.getProperty("voices"):
-            name = (voice.name or "").lower()
-            langs = [str(lang).lower() for lang in getattr(voice, "languages", [])]
-            if "uz" in name or any("uz" in lang for lang in langs):
-                self.tts_engine.setProperty("voice", voice.id)
-                return
-        # O'zbekcha ovoz topilmasa, standart ovoz ishlatiladi - matn baribir
-        # o'zbekcha bo'ladi, faqat talaffuz aksenti boshqacha bo'lishi mumkin.
 
     def speak(self, text):
         self.tts_engine.say(text)

@@ -13,10 +13,12 @@ import pyttsx3
 
 import config
 from commands import dispatch
+from voice import configure_voice
 
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
 tts_engine = pyttsx3.init()
+configure_voice(tts_engine)
 
 
 def speak(text):
