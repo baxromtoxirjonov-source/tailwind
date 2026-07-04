@@ -3,10 +3,13 @@
 # Uyg'otuvchi so'z (shu so'zni aytsangiz, yordamchi buyruqni kuta boshlaydi)
 WAKE_WORDS = ["kompyuter"]
 
-# Nutqni tanish tili. Agar tanish sifatsiz bo'lsa "ru-RU" yoki "en-US" ga
-# almashtirib ko'ring - Google'ning bepul tanish xizmati ba'zi tillarda
-# boshqalariga qaraganda aniqroq ishlaydi.
-LANGUAGE = "ru-RU"
+# Nutqni tanish tili. MUHIM: commands.py dagi barcha buyruq so'zlari
+# (och, qidir, papka, ovoz...) lotin-o'zbekcha yozilgan. Agar bu yerni
+# "ru-RU" yoki boshqa tilga o'zgartirsangiz, tanish natijasi boshqa
+# alifbo/tilda qaytadi va hech qanday buyruq mos kelmay qoladi - shuning
+# uchun tilni o'zgartirsangiz, commands.py dagi kalit so'zlarni ham o'sha
+# tilga tarjima qilish kerak bo'ladi.
+LANGUAGE = "uz-UZ"
 
 # Ovoz bilan ochsa bo'ladigan dasturlar. Kalit - buyruqda aytiladigan nom,
 # qiymat - dastur fayli (agar PATH'da bo'lmasa to'liq yo'l ko'rsating).

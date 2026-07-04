@@ -14,6 +14,7 @@ import pyttsx3
 import config
 from commands import dispatch
 from voice import configure_voice
+from wakeword import wake_word_detected
 
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
@@ -57,10 +58,13 @@ def main():
             continue
 
         lowered = heard.lower()
-        if any(wake_word in lowered for wake_word in config.WAKE_WORDS):
+        if wake_word_detected(lowered, config.WAKE_WORDS):
             speak("Eshityapman")
             command_text = listen(timeout=5, phrase_time_limit=6)
-            dispatch(command_text, speak, lambda: listen(timeout=5, phrase_time_limit=4))
+            try:
+                dispatch(command_text, speak, lambda: listen(timeout=5, phrase_time_limit=4))
+            except Exception as exc:  # noqa: BLE001 - bitta buyruq xatosi yordamchini o'chirib qo'ymasligi kerak
+                speak(f"Xatolik yuz berdi: {exc}")
 
 
 if __name__ == "__main__":

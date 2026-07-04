@@ -6,6 +6,7 @@ Ishga tushirish:
     python gui_assistant.py
 """
 
+import ctypes
 import queue
 import threading
 import time
@@ -18,10 +19,16 @@ import speech_recognition as sr
 import config
 from commands import dispatch
 from voice import configure_voice
+from wakeword import wake_word_detected
 
 WIDTH = 520
 HEIGHT = 90
 READY_STATUS = "Tayyor. \"kompyuter\" deb ayting yoki bu yerga yozing"
+
+COLOR_IDLE = "#9aa0a6"
+COLOR_LISTENING = "#8ab4f8"
+COLOR_REPLY = "#e8eaed"
+COLOR_ERROR = "#f28b82"
 
 
 class AssistantWindow:
@@ -33,6 +40,7 @@ class AssistantWindow:
         self.root.configure(bg="#202124")
         self._position_window()
         self._build_ui()
+        self._round_corners()
 
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
@@ -95,6 +103,21 @@ class AssistantWindow:
         )
         self.mic_button.pack(side="right")
 
+    def _round_corners(self):
+        # Windows 11'da oyna burchaklarini yumaloqlashtiradi. Windows 10'da
+        # bu DWM atributi mavjud emas, shuning uchun xato bo'lsa e'tiborsiz
+        # qoldiramiz - oyna oddiy to'rtburchak bo'lib qoladi.
+        try:
+            hwnd = self.root.winfo_id()
+            DWMWA_WINDOW_CORNER_PREFERENCE = 33
+            DWMWCP_ROUND = 2
+            pref = ctypes.c_int(DWMWCP_ROUND)
+            ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ctypes.byref(pref), ctypes.sizeof(pref)
+            )
+        except (AttributeError, OSError):
+            pass
+
     def _start_drag(self, event):
         self._drag_offset = (event.x, event.y)
 
@@ -112,15 +135,16 @@ class AssistantWindow:
     def _poll_queue(self):
         try:
             while True:
-                kind, payload = self.command_queue.get_nowait()
+                kind, text, color = self.command_queue.get_nowait()
                 if kind == "status":
-                    self.status_var.set(payload)
+                    self.status_var.set(text)
+                    self.status_label.configure(fg=color)
         except queue.Empty:
             pass
         self.root.after(100, self._poll_queue)
 
-    def _set_status(self, text):
-        self.command_queue.put(("status", text))
+    def _set_status(self, text, color=COLOR_IDLE):
+        self.command_queue.put(("status", text, color))
 
     def _listen(self, timeout=5, phrase_time_limit=6):
         # Mikrofon bir vaqtning o'zida faqat bitta joydan (uyg'otuvchi so'z
@@ -139,16 +163,19 @@ class AssistantWindow:
             return ""
 
     def _dispatch_and_report(self, text):
-        self._set_status(f"Siz: {text}")
+        self._set_status(f"Siz: {text}", COLOR_REPLY)
 
         def speak_and_show(reply):
-            self._set_status(reply)
+            self._set_status(reply, COLOR_REPLY)
             self.speak(reply)
 
         def confirm_listen():
             return self._listen(timeout=5, phrase_time_limit=4)
 
-        dispatch(text, speak_and_show, confirm_listen)
+        try:
+            dispatch(text, speak_and_show, confirm_listen)
+        except Exception as exc:  # noqa: BLE001 - buyruq turlari xilma-xil, biror xato butun yordamchini o'chirib qo'ymasligi kerak
+            self._set_status(f"Xatolik: {exc}", COLOR_ERROR)
         threading.Timer(4.0, lambda: self._set_status(READY_STATUS)).start()
 
     # ---------- Matn orqali buyruq ----------
@@ -177,12 +204,12 @@ class AssistantWindow:
     def _voice_command_flow(self):
         self.busy.set()
         try:
-            self._set_status("Tinglayapman...")
+            self._set_status("Tinglayapman...", COLOR_LISTENING)
             text = self._listen(timeout=5, phrase_time_limit=6)
             if text:
                 self._dispatch_and_report(text)
             else:
-                self._set_status("Eshitmadim, qaytadan urinib ko'ring")
+                self._set_status("Eshitmadim, qaytadan urinib ko'ring", COLOR_ERROR)
                 threading.Timer(2.5, lambda: self._set_status(READY_STATUS)).start()
         finally:
             self.busy.clear()
@@ -190,19 +217,20 @@ class AssistantWindow:
     # ---------- Fonda uyg'otuvchi so'zni kutish ----------
 
     def _wake_word_loop(self):
-        with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source, duration=1)
+        with self.mic_lock:
+            with self.microphone as source:
+                self.recognizer.adjust_for_ambient_noise(source, duration=1)
         while True:
             if self.busy.is_set():
                 time.sleep(0.2)
                 continue
             heard = self._listen(timeout=4, phrase_time_limit=4)
-            if not heard or not any(w in heard.lower() for w in config.WAKE_WORDS):
+            if not heard or not wake_word_detected(heard.lower(), config.WAKE_WORDS):
                 continue
 
             self.busy.set()
             try:
-                self._set_status("Eshityapman...")
+                self._set_status("Eshityapman...", COLOR_LISTENING)
                 command_text = self._listen(timeout=5, phrase_time_limit=6)
                 if command_text:
                     self._dispatch_and_report(command_text)
