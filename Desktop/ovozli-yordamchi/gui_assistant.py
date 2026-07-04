@@ -49,8 +49,7 @@ class AssistantWindow:
 
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
-        self.tts_engine = pyttsx3.init()
-        configure_voice(self.tts_engine)
+        self.speak_lock = threading.Lock()
 
         self.mic_lock = threading.Lock()
         self.busy = threading.Event()
@@ -138,8 +137,18 @@ class AssistantWindow:
         self.root.geometry(f"+{x}+{y}")
 
     def speak(self, text):
-        self.tts_engine.say(text)
-        self.tts_engine.runAndWait()
+        # Har safar yangi pyttsx3 dvigatelini yaratamiz. Bitta umumiy
+        # dvigatelni turli fon oqimlaridan (background thread) qayta-qayta
+        # ishlatish Windows SAPI5'ning COM apartment cheklovi tufayli
+        # ba'zan birinchi muvaffaqiyatli chaqiruvdan keyin sukut bo'yicha
+        # (xatosiz) osilib qolishiga sabab bo'lgan - shu bilan "faqat bir
+        # marta ishlaydi" muammosi kelib chiqqan.
+        with self.speak_lock:
+            engine = pyttsx3.init()
+            configure_voice(engine)
+            engine.say(text)
+            engine.runAndWait()
+            engine.stop()
 
     # ---------- Asosiy oqim (thread-safe navbat orqali UI yangilanadi) ----------
 
