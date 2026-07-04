@@ -38,21 +38,21 @@ def listen(timeout=5, phrase_time_limit=6):
 
     try:
         text = recognizer.recognize_google(audio, language=config.LANGUAGE)
-        print(f"Eshitildi: {text}")
+        print(f"Услышано: {text}")
         return text
     except sr.UnknownValueError:
         return ""
     except sr.RequestError as exc:
-        print(f"Tanish xizmatiga ulanib bo'lmadi: {exc}")
+        print(f"Не удалось подключиться к сервису распознавания: {exc}")
         return ""
 
 
 def main():
     with microphone as source:
-        print("Atrofdagi shovqinga moslashtirilmoqda...")
+        print("Настройка под окружающий шум...")
         recognizer.adjust_for_ambient_noise(source, duration=1)
 
-    print("Tayyor. Uyg'otuvchi so'zni kuting:", ", ".join(config.WAKE_WORDS))
+    print("Готов. Ожидаю слово пробуждения:", ", ".join(config.WAKE_WORDS))
     while True:
         heard = listen(timeout=None, phrase_time_limit=4)
         if not heard:
@@ -60,7 +60,7 @@ def main():
 
         lowered = heard.lower()
         if wake_word_detected(lowered, config.WAKE_WORDS):
-            speak("Eshityapman")
+            speak("Слушаю")
             command_text = listen(timeout=5, phrase_time_limit=6)
             confirm_listen = lambda: listen(timeout=5, phrase_time_limit=4)
             try:
@@ -69,11 +69,11 @@ def main():
                 else:
                     dispatch(command_text, speak, confirm_listen)
             except Exception as exc:  # noqa: BLE001 - bitta buyruq xatosi yordamchini o'chirib qo'ymasligi kerak
-                speak(f"Xatolik yuz berdi: {exc}")
+                speak(f"Произошла ошибка: {exc}")
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nYordamchi to'xtatildi")
+        print("\nАссистент остановлен")

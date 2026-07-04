@@ -1,15 +1,19 @@
 # Yordamchi sozlamalari. Bu faylni tahrirlab, o'zingizga moslashtiring.
 
-# Uyg'otuvchi so'z (shu so'zni aytsangiz, yordamchi buyruqni kuta boshlaydi)
-WAKE_WORDS = ["kompyuter"]
+# Uyg'otuvchi so'z (shu so'zlardan birini aytsangiz, yordamchi buyruqni
+# kuta boshlaydi)
+WAKE_WORDS = ["компьютер", "эй компьютер", "хей компьютер", "привет компьютер"]
 
-# Nutqni tanish tili. MUHIM: commands.py dagi barcha buyruq so'zlari
-# (och, qidir, papka, ovoz...) lotin-o'zbekcha yozilgan. Agar bu yerni
-# "ru-RU" yoki boshqa tilga o'zgartirsangiz, tanish natijasi boshqa
-# alifbo/tilda qaytadi va hech qanday buyruq mos kelmay qoladi - shuning
-# uchun tilni o'zgartirsangiz, commands.py dagi kalit so'zlarni ham o'sha
-# tilga tarjima qilish kerak bo'ladi.
-LANGUAGE = "uz-UZ"
+# Nutqni tanish tili. Ruscha gapirish uchun "ru-RU" qo'yilgan.
+#
+# MUHIM: commands.py dagi kalit so'zli (qat'iy) buyruq tanish tizimi
+# lotin-o'zbekcha yozilgan ("och", "qidir", "papka"...) va shuning uchun
+# ru-RU tanish natijasi bilan mos kelmaydi. Bu muammo emas, chunki AI
+# yoqilgan bo'lsa (ANTHROPIC_API_KEY o'rnatilgan bo'lsa) barcha buyruqlar
+# ai_router.py orqali - matnning qaysi tilda bo'lishidan qat'iy nazar -
+# tushuniladi. commands.py faqat AI o'rnatilmagan hollarda zaxira sifatida
+# ishlaydi (o'sha holda o'zbekcha gapirish kerak bo'ladi).
+LANGUAGE = "ru-RU"
 
 # Ovoz bilan ochsa bo'ladigan dasturlar. Kalit - buyruqda aytiladigan nom,
 # qiymat - dastur fayli (agar PATH'da bo'lmasa to'liq yo'l ko'rsating).
